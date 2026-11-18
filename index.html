@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>甜蜜申请中心 ♡</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#fff0f5,#ffe0eb);
+  color:#70485a;text-align:center;padding:25px 14px;
+}
+main{max-width:760px;margin:auto}
+h1{color:#d65f91;font-size:2rem}
+.subtitle{color:#a66c84}
+.packages{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+ gap:15px;margin:28px 0;
+}
+.card{
+ background:#fff;border:2px solid #ffd0e1;border-radius:20px;
+ padding:22px 15px;box-shadow:0 5px 15px #e8a9c333;
+}
+.card h2{color:#d65f91;font-size:1.2rem}
+.card p{font-size:14px;line-height:1.7}
+button{
+ border:0;border-radius:25px;padding:12px 22px;
+ background:#e987ad;color:white;font-weight:bold;
+ cursor:pointer;font-size:15px;
+}
+button:hover{background:#d65f91}
+form{
+ background:white;border-radius:22px;padding:24px;
+ text-align:left;box-shadow:0 5px 20px #e8a9c333;
+}
+form h2{text-align:center;color:#d65f91}
+label{display:block;margin:15px 0 7px;font-weight:bold}
+input,select,textarea{
+ width:100%;padding:12px;border:1px solid #f2bfd2;
+ border-radius:12px;font-size:15px;background:#fffafd;
+ color:#70485a;
+}
+textarea{min-height:100px;resize:vertical}
+.submit{width:100%;margin-top:20px}
+#message{text-align:center;margin-top:18px;font-weight:bold}
+footer{margin:25px;color:#b27c94;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>♡ 甜蜜申请中心 ♡</h1>
+<p class="subtitle">欢迎来到专属套餐申请页面！请认真填写哦～</p>
+
+<section class="packages">
+ <article class="card">
+  <h2>💗 男朋友套餐</h2>
+  <p>陪伴 · 关心 · 约会 · 每日甜蜜问候</p>
+  <button type="button" onclick="choose('男朋友套餐')">选择套餐</button>
+ </article>
+ <article class="card">
+  <h2>💍 老公套餐</h2>
+  <p>专属宠爱 · 温柔陪伴 · 贴心照顾</p>
+  <button type="button" onclick="choose('老公套餐')">选择套餐</button>
+ </article>
+ <article class="card">
+  <h2>🐰 可爱小奴隶套餐</h2>
+  <p>帮忙做事 · 听从合理要求 · 可爱服务</p>
+  <button type="button" onclick="choose('可爱小奴隶套餐')">选择套餐</button>
+ </article>
+</section>
+
+<form id="application">
+ <h2>📝 套餐申请表</h2>
+
+ <label for="name">你的名字 / 昵称</label>
+ <input id="name" name="name" required maxlength="80"
+        placeholder="请输入你的名字">
+
+ <label for="package">选择套餐</label>
+ <select id="package" name="package" required>
+  <option value="">请选择一个套餐</option>
+  <option>男朋友套餐</option>
+  <option>老公套餐</option>
+  <option>可爱小奴隶套餐</option>
+ </select>
+
+ <label for="reason">申请理由</label>
+ <textarea id="reason" name="reason" required maxlength="1000"
+ placeholder="为什么想申请这个套餐？"></textarea>
+
+ <label for="availability">你什么时候有空？</label>
+ <input id="availability" name="availability"
+        placeholder="例如：每天晚上">
+
+ <label for="contact">联系方式（可选）</label>
+ <input id="contact" name="contact" maxlength="100"
+        placeholder="例如：微信昵称">
+
+ <button class="submit" type="submit">💌 提交申请</button>
+ <p id="message" role="status"></p>
+</form>
+
+<footer>♡ 仅限自愿申请 · 请尊重彼此的界限 ♡</footer>
+</main>
+
+<script>
+const SCRIPT_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
+
+function choose(packageName){
+ document.getElementById("package").value = packageName;
+ document.getElementById("application").scrollIntoView({behavior:"smooth"});
+}
+
+document.getElementById("application").addEventListener("submit", async function(e){
+ e.preventDefault();
+
+ const message = document.getElementById("message");
+ const button = this.querySelector("button[type=submit]");
+
+ if(SCRIPT_URL.includes("PASTE_YOUR")){
+   message.textContent = "请先设置 Google Sheets 连接网址哦～";
+   return;
+ }
+
+ const data = Object.fromEntries(new FormData(this).entries());
+ data.submittedAt = new Date().toLocaleString();
+
+ button.disabled = true;
+ button.textContent = "正在提交…";
+ message.textContent = "";
+
+ try{
+   await fetch(SCRIPT_URL,{
+     method:"POST",
+     mode:"no-cors",
+     headers:{"Content-Type":"text/plain;charset=utf-8"},
+     body:JSON.stringify(data)
+   });
+
+   message.textContent = "💗 申请已发送！谢谢你的申请～";
+   this.reset();
+ }catch(error){
+   message.textContent = "提交失败，请检查网络或稍后再试。";
+ }finally{
+   button.disabled = false;
+   button.textContent = "💌 提交申请";
+ }
+});
+</script>
+</body>
+</html>
